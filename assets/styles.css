@@ -310,10 +310,18 @@ h1 {
   margin-top: 24px;
 }
 
-.checkpoint-text h2 {
+.checkpoint-wagon-list {
+  display: grid;
+  gap: 3px;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.55;
   letter-spacing: -0.02em;
+}
+
+.checkpoint-wagon-item {
+  display: block;
 }
 
 .checkpoint-text p {

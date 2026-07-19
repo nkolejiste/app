@@ -96,6 +96,14 @@ function trackIconSvg() {
 }
 
 function createCheckpointMarkup(checkpoint, index) {
+  const wagons = Array.isArray(checkpoint.wagons)
+    ? checkpoint.wagons
+    : checkpoint.wagon
+      ? [checkpoint.wagon]
+      : [];
+
+  const wagonCount = checkpoint.count ?? wagons.length;
+
   return `
     <article class="checkpoint-card" data-checkpoint="${index}">
       <div class="checkpoint-content">
@@ -103,7 +111,7 @@ function createCheckpointMarkup(checkpoint, index) {
           <div class="movement-group movement-group--wagons">
             <div class="wagon-symbol">${wagonIconSvg()}</div>
             <div class="wagon-meta">
-              <strong class="wagon-count">${checkpoint.count}</strong>
+              <strong class="wagon-count">${wagonCount}</strong>
             </div>
           </div>
 
@@ -121,8 +129,10 @@ function createCheckpointMarkup(checkpoint, index) {
         </div>
 
         <div class="checkpoint-text">
-          <h2>${checkpoint.wagon}</h2>
-          <p>${checkpoint.description || ''}</p>
+          <div class="checkpoint-wagon-list">
+            ${wagons.map((wagon) => `<div class="checkpoint-wagon-item">${wagon}</div>`).join('')}
+          </div>
+          ${checkpoint.description ? `<p>${checkpoint.description}</p>` : ''}
         </div>
       </div>
 
