@@ -19,18 +19,32 @@ window.activityConfig = {
 
   initialState: [
     {
-      track: 3,
+      track: 2,
       wagons: [
-        'DB Zagkks',
-        'VTG Zacens'
+        'ČDC Zacns 7836',
+        'OnRail Zacens 7933'
       ]
     },
     {
-      track: 8,
+      track: 1,
       wagons: [
-        'ČD Cargo Zacns'
+        'DB Zagkks 7920',
+        'VTG Zags 7814',
+        'VTG Zags 7814',
+        'EVA Zags 7915',
+        'EVA Zags 7915'
       ]
-    }
+    },
+    {
+      track: 3,
+      wagons: [
+        'DB Sggmrs 4954',
+        'VTG Zas 7956',
+        'VTG Zacens 7933',
+        'VTG Zacens 7834',
+        'KVG Zaes 7978'
+      ]
+    },
   ],
 
   checkpoints: [
