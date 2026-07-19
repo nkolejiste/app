@@ -1,0 +1,414 @@
+:root {
+  color-scheme: dark;
+  --background: #070707;
+  --surface: #101010;
+  --surface-hover: #171717;
+  --text: #f7f7f7;
+  --muted: #9c9c9c;
+  --line: #303030;
+  --danger: #e34242;
+  --success: #2fc56d;
+  --active: #ffffff;
+  --radius: 18px;
+  --shadow: 0 18px 45px rgba(0, 0, 0, 0.32);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.055), transparent 34rem),
+    var(--background);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+}
+
+.page-shell {
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 64px 0 80px;
+}
+
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 42px;
+}
+
+.back-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 160ms ease;
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+  color: var(--text);
+}
+
+.page-header {
+  margin-bottom: 38px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.3rem, 8vw, 4.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.page-description {
+  max-width: 560px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.menu-list,
+.checkpoint-list {
+  display: grid;
+  gap: 16px;
+}
+
+.menu-card {
+  min-height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 28px;
+  border: 1px solid #fff;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.025);
+  color: var(--text);
+  text-decoration: none;
+  font-size: clamp(1.25rem, 4vw, 1.7rem);
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.menu-card:hover,
+.menu-card:focus-visible {
+  transform: translateY(-2px);
+  background: var(--surface-hover);
+}
+
+.menu-arrow {
+  font-size: 1.6rem;
+  color: var(--muted);
+}
+
+.reset-button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.reset-button:hover,
+.reset-button:focus-visible {
+  border-color: var(--text);
+  background: var(--surface-hover);
+}
+
+.activity-header {
+  margin-bottom: 30px;
+}
+
+
+.initial-state {
+  margin: 0 0 30px;
+}
+
+.section-heading {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.initial-track-list {
+  display: grid;
+  gap: 10px;
+}
+
+.initial-track {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.initial-track h2 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+}
+
+.initial-wagon-list {
+  margin: 0;
+  padding-left: 1.45rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.initial-wagon-list li::marker {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.checkpoint-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 22px;
+  min-height: 178px;
+  padding: 22px;
+  border: 2px solid var(--danger);
+  border-radius: var(--radius);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012));
+  box-shadow: var(--shadow);
+  transition: border-color 180ms ease, opacity 180ms ease, transform 180ms ease;
+}
+
+.checkpoint-card.is-active {
+  border-color: var(--active);
+  transform: translateY(-1px);
+}
+
+.checkpoint-card.is-complete {
+  border-color: var(--success);
+}
+
+.checkpoint-content {
+  min-width: 0;
+}
+
+.checkpoint-topline {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.movement-group {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.movement-group--wagons {
+  gap: 16px;
+  flex: 0 0 auto;
+}
+
+.movement-group--tracks {
+  gap: 16px;
+  margin-left: 8px;
+  flex: 1 1 auto;
+}
+
+.movement-divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.26), transparent);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.08);
+}
+
+.wagon-symbol {
+  width: 96px;
+  flex: 0 0 96px;
+}
+
+.wagon-symbol svg,
+.track-symbol svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wagon-meta {
+  display: flex;
+  align-items: center;
+}
+
+.wagon-count {
+  font-size: clamp(1.9rem, 4vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.track-symbol {
+  width: 52px;
+  flex: 0 0 52px;
+}
+
+.route-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: clamp(1rem, 3vw, 1.15rem);
+}
+
+.route-label {
+  color: #d6d6d6;
+  font-weight: 500;
+}
+
+.track-number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 52px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid #666;
+  border-radius: 2px;
+  background: #080808;
+  color: #fff;
+  font-weight: 900;
+}
+
+.checkpoint-text {
+  margin-top: 24px;
+}
+
+.checkpoint-text h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.checkpoint-text p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.complete-button {
+  align-self: center;
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--danger);
+  border-radius: 12px;
+  background: rgba(227, 66, 66, 0.09);
+  color: transparent;
+  cursor: pointer;
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 160ms ease;
+}
+
+.checkpoint-card.is-active .complete-button {
+  border-color: var(--active);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.checkpoint-card.is-complete .complete-button {
+  border-color: var(--success);
+  background: var(--success);
+  color: #07120b;
+}
+
+.complete-button:hover,
+.complete-button:focus-visible {
+  transform: scale(1.04);
+}
+
+.checkmark {
+  font-size: 2rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+@media (max-width: 620px) {
+  .page-shell {
+    width: min(100% - 24px, 760px);
+    padding-top: 30px;
+  }
+
+  .top-nav {
+    align-items: stretch;
+    flex-direction: column;
+    margin-bottom: 32px;
+  }
+
+  .back-link {
+    align-self: flex-start;
+  }
+
+  .reset-button {
+    width: 100%;
+  }
+
+  .checkpoint-card {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .checkpoint-topline {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .movement-group--tracks {
+    margin-left: 0;
+  }
+
+  .movement-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .wagon-symbol {
+    width: 96px;
+    flex-basis: 96px;
+  }
+
+  .route-line {
+    gap: 10px;
+  }
+
+  .complete-button {
+    width: 100%;
+    height: 52px;
+  }
+}
