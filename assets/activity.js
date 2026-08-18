@@ -56,39 +56,50 @@ renderInitialState();
 
 function wagonIconSvg() {
   return `
-    <svg viewBox="0 0 180 86" role="img" aria-hidden="true">
-      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 20h140l7 33H13z" fill="currentColor" opacity="0.07" />
-        <path d="M20 20h140l7 33H13z" />
-        <path d="M17 25h146" opacity="0.7" />
-        <path d="M15 48h150" opacity="0.55" />
+    <svg viewBox="0 0 210 92" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.35" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16h168v45H21z" fill="currentColor" opacity="0.065" />
+        <path d="M21 16h168v45H21z" />
+        <path d="M18 14h174v4H18z" fill="currentColor" opacity="0.12" />
+        <path d="M18 14h174v4H18z" />
+        <path d="M19 61h172v5H19z" fill="currentColor" opacity="0.12" />
+        <path d="M19 61h172v5H19z" />
 
-        <path d="M30 21v31M48 21v31M66 21v31M84 21v31M102 21v31M120 21v31M138 21v31M156 21v31" />
-        <path d="M31 25 46 48M49 25 64 48M67 25 82 48M85 25 100 48M103 25 118 48M121 25 136 48M139 25 154 48" opacity="0.72" />
+        <path d="M35 17v44M57 17v44M79 17v44M101 17v44M123 17v44M145 17v44M167 17v44" />
+        <path d="M23 23h166M23 56h166" opacity="0.48" />
+        <path d="M99 17v44M107 17v44" opacity="0.78" />
+        <path d="M103 24v12M103 44v10" opacity="0.62" />
 
-        <path d="M13 53h154" />
-        <path d="M24 53v6h132v-6" />
-        <path d="M6 50h8M166 50h8" />
-        <path d="M6 47v6M174 47v6" />
-        <path d="M3 50h3M174 50h3" />
-        <path d="M89 59v5M84 64h10" opacity="0.75" />
+        <path d="M14 59h5M191 59h5" />
+        <path d="M7 56h7v7H7M196 56h7v7h-7" />
+        <path d="M3 59h4M203 59h4" />
+        <path d="M4 55v8M206 55v8" />
+        <path d="M102 66v5M98 71h8" opacity="0.7" />
 
-        <path d="M28 60h38l5 6-5 8H28l-5-8z" />
-        <path d="M114 60h38l5 6-5 8h-38l-5-8z" />
-        <path d="M30 64h34M116 64h34" opacity="0.65" />
+        <path d="M31 68h48l5 7-7 8H33l-7-8z" fill="currentColor" opacity="0.045" />
+        <path d="M31 68h48l5 7-7 8H33l-7-8z" />
+        <path d="M131 68h48l5 7-7 8h-44l-7-8z" fill="currentColor" opacity="0.045" />
+        <path d="M131 68h48l5 7-7 8h-44l-7-8z" />
+        <path d="M34 72h42M134 72h42" opacity="0.55" />
+        <path d="M55 68v6M155 68v6" opacity="0.65" />
 
-        <circle cx="34" cy="72" r="7" />
-        <circle cx="59" cy="72" r="7" />
-        <circle cx="121" cy="72" r="7" />
-        <circle cx="146" cy="72" r="7" />
-        <circle cx="34" cy="72" r="2" fill="currentColor" stroke="none" />
-        <circle cx="59" cy="72" r="2" fill="currentColor" stroke="none" />
-        <circle cx="121" cy="72" r="2" fill="currentColor" stroke="none" />
-        <circle cx="146" cy="72" r="2" fill="currentColor" stroke="none" />
+        <circle cx="39" cy="81" r="7.2" fill="currentColor" opacity="0.08" />
+        <circle cx="70" cy="81" r="7.2" fill="currentColor" opacity="0.08" />
+        <circle cx="140" cy="81" r="7.2" fill="currentColor" opacity="0.08" />
+        <circle cx="171" cy="81" r="7.2" fill="currentColor" opacity="0.08" />
+        <circle cx="39" cy="81" r="7.2" />
+        <circle cx="70" cy="81" r="7.2" />
+        <circle cx="140" cy="81" r="7.2" />
+        <circle cx="171" cy="81" r="7.2" />
+        <circle cx="39" cy="81" r="2" fill="currentColor" stroke="none" />
+        <circle cx="70" cy="81" r="2" fill="currentColor" stroke="none" />
+        <circle cx="140" cy="81" r="2" fill="currentColor" stroke="none" />
+        <circle cx="171" cy="81" r="2" fill="currentColor" stroke="none" />
 
-        <path d="M16 31H9v18M9 35h7M9 41h7M9 47h7" opacity="0.8" />
-        <path d="M164 32h7v17" opacity="0.55" />
-        <path d="M75 56h30" opacity="0.6" />
+        <path d="M21 29h-7v25M14 34h7M14 40h7M14 46h7M14 52h7" opacity="0.76" />
+        <path d="M189 30h7v24" opacity="0.5" />
+        <path d="M87 66h36" opacity="0.55" />
+        <path d="M91 69h28" opacity="0.4" />
       </g>
     </svg>
   `;
@@ -258,6 +269,7 @@ let signatureCanvas = null;
 let signatureContext = null;
 let signatureDrawing = false;
 let signatureHasInk = false;
+let signatureRenderToken = 0;
 let activeCheckpointIndex = null;
 let activeDocumentIndex = null;
 
@@ -438,10 +450,13 @@ function createDocumentModal() {
 function sizeSignatureCanvas() {
   if (!signatureCanvas || signatureCanvas.closest('.signature-section').hidden) return;
 
+  const checkpointIndex = activeCheckpointIndex;
+  const documentIndex = activeDocumentIndex;
+  const renderToken = ++signatureRenderToken;
   const ratio = Math.max(1, window.devicePixelRatio || 1);
   const rect = signatureCanvas.getBoundingClientRect();
-  const storedSignature = activeCheckpointIndex !== null && activeDocumentIndex !== null
-    ? getStoredDocumentState(activeCheckpointIndex, activeDocumentIndex).signature
+  const storedSignature = checkpointIndex !== null && documentIndex !== null
+    ? getStoredDocumentState(checkpointIndex, documentIndex).signature
     : null;
 
   signatureCanvas.width = Math.round(rect.width * ratio);
@@ -456,6 +471,13 @@ function sizeSignatureCanvas() {
   if (storedSignature) {
     const image = new Image();
     image.onload = () => {
+      if (
+        renderToken !== signatureRenderToken ||
+        activeCheckpointIndex !== checkpointIndex ||
+        activeDocumentIndex !== documentIndex
+      ) return;
+
+      signatureContext.clearRect(0, 0, rect.width, rect.height);
       signatureContext.drawImage(image, 0, 0, rect.width, rect.height);
     };
     image.src = storedSignature;
@@ -513,6 +535,12 @@ function openDocument(checkpointIndex, documentIndex) {
     signatureCanvas.addEventListener('pointerleave', stopSignature);
   }
 
+  signatureRenderToken += 1;
+  if (signatureCanvas) {
+    const clearContext = signatureCanvas.getContext('2d');
+    clearContext.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+  }
+
   activeCheckpointIndex = checkpointIndex;
   activeDocumentIndex = documentIndex;
   const stored = getStoredDocumentState(checkpointIndex, documentIndex);
@@ -541,6 +569,7 @@ function openDocument(checkpointIndex, documentIndex) {
 
 function closeDocument() {
   if (!documentModal) return;
+  signatureRenderToken += 1;
   documentModal.hidden = true;
   document.body.classList.remove('document-open');
   activeCheckpointIndex = null;
