@@ -56,22 +56,39 @@ renderInitialState();
 
 function wagonIconSvg() {
   return `
-    <svg viewBox="0 0 140 78" role="img" aria-hidden="true">
-      <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 52H122" />
-        <path d="M16 52H8M132 52H124" />
-        <path d="M43 52v6M97 52v6" />
-        <path d="M28 48h84" />
-        <path d="M35 48l-5 8M105 48l5 8" />
-        <path d="M36 24h68c8 0 14 6 14 14s-6 14-14 14H36c-8 0-14-6-14-14s6-14 14-14Z" />
-        <path d="M48 24v-7h44v7" />
-        <path d="M58 17h24" />
-        <path d="M70 17v-5" />
-        <path d="M34 38h72" opacity="0.7" />
-        <circle cx="42" cy="61" r="8" />
-        <circle cx="98" cy="61" r="8" />
-        <circle cx="42" cy="61" r="2.2" fill="currentColor" stroke="none" />
-        <circle cx="98" cy="61" r="2.2" fill="currentColor" stroke="none" />
+    <svg viewBox="0 0 180 86" role="img" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 20h140l7 33H13z" fill="currentColor" opacity="0.07" />
+        <path d="M20 20h140l7 33H13z" />
+        <path d="M17 25h146" opacity="0.7" />
+        <path d="M15 48h150" opacity="0.55" />
+
+        <path d="M30 21v31M48 21v31M66 21v31M84 21v31M102 21v31M120 21v31M138 21v31M156 21v31" />
+        <path d="M31 25 46 48M49 25 64 48M67 25 82 48M85 25 100 48M103 25 118 48M121 25 136 48M139 25 154 48" opacity="0.72" />
+
+        <path d="M13 53h154" />
+        <path d="M24 53v6h132v-6" />
+        <path d="M6 50h8M166 50h8" />
+        <path d="M6 47v6M174 47v6" />
+        <path d="M3 50h3M174 50h3" />
+        <path d="M89 59v5M84 64h10" opacity="0.75" />
+
+        <path d="M28 60h38l5 6-5 8H28l-5-8z" />
+        <path d="M114 60h38l5 6-5 8h-38l-5-8z" />
+        <path d="M30 64h34M116 64h34" opacity="0.65" />
+
+        <circle cx="34" cy="72" r="7" />
+        <circle cx="59" cy="72" r="7" />
+        <circle cx="121" cy="72" r="7" />
+        <circle cx="146" cy="72" r="7" />
+        <circle cx="34" cy="72" r="2" fill="currentColor" stroke="none" />
+        <circle cx="59" cy="72" r="2" fill="currentColor" stroke="none" />
+        <circle cx="121" cy="72" r="2" fill="currentColor" stroke="none" />
+        <circle cx="146" cy="72" r="2" fill="currentColor" stroke="none" />
+
+        <path d="M16 31H9v18M9 35h7M9 41h7M9 47h7" opacity="0.8" />
+        <path d="M164 32h7v17" opacity="0.55" />
+        <path d="M75 56h30" opacity="0.6" />
       </g>
     </svg>
   `;
@@ -92,6 +109,55 @@ function trackIconSvg() {
         <path d="M16 62h52" />
       </g>
     </svg>
+  `;
+}
+
+function documentIconSvg() {
+  return `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6 2.75h8.3L18.5 7v14.25H6z" />
+      <path d="M14 2.75V7h4.5" />
+      <path d="M8.75 11h7M8.75 14.5h7M8.75 18h4.5" />
+    </svg>
+  `;
+}
+
+function getCheckpointDocuments(checkpoint) {
+  if (Array.isArray(checkpoint.documents)) {
+    return checkpoint.documents.map((document) => (
+      typeof document === 'string' ? { file: document } : document
+    ));
+  }
+  if (checkpoint.document) {
+    return [typeof checkpoint.document === 'string' ? { file: checkpoint.document } : checkpoint.document];
+  }
+  return [];
+}
+
+function getDocumentTitle(documents, documentIndex) {
+  if (documents.length === 1) return 'Nákladní list';
+  return `Nákladní list ${documentIndex + 1}`;
+}
+
+function createDocumentMarkup(checkpoint, checkpointIndex) {
+  const documents = getCheckpointDocuments(checkpoint);
+
+  if (!documents.length) return '';
+
+  return `
+    <div class="document-list">
+      ${documents.map((documentConfig, documentIndex) => {
+        const title = getDocumentTitle(documents, documentIndex);
+
+        return `
+          <button class="document-button" type="button" data-checkpoint-document="${checkpointIndex}" data-document-index="${documentIndex}" aria-label="Otevřít ${title}">
+            <span class="document-button-icon">${documentIconSvg()}</span>
+            <span class="document-button-text">${title}</span>
+            <span class="document-button-status" aria-hidden="true">✓</span>
+          </button>
+        `;
+      }).join('')}
+    </div>
   `;
 }
 
@@ -133,6 +199,7 @@ function createCheckpointMarkup(checkpoint, index) {
             ${wagons.map((wagon) => `<div class="checkpoint-wagon-item">${wagon}</div>`).join('')}
           </div>
           ${checkpoint.description ? `<p>${checkpoint.description}</p>` : ''}
+          ${createDocumentMarkup(checkpoint, index)}
         </div>
       </div>
 
@@ -153,6 +220,7 @@ renderCheckpointList();
 
 const cards = Array.from(document.querySelectorAll('.checkpoint-card'));
 const STORAGE_KEY = config.storageKey || 'activity-default';
+const DOCUMENT_STORAGE_KEY = `${STORAGE_KEY}-documents`;
 
 function loadState() {
   try {
@@ -168,8 +236,30 @@ function loadState() {
   return cards.map(() => false);
 }
 
+function loadDocumentState() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(DOCUMENT_STORAGE_KEY));
+
+    if (stored && typeof stored === 'object' && !Array.isArray(stored)) {
+      return stored;
+    }
+  } catch (error) {
+    console.warn('Stav dokumentů se nepodařilo načíst.', error);
+  }
+
+  return {};
+}
+
 let completionState = loadState();
+let documentState = loadDocumentState();
 let scrollAnimationFrame = null;
+let documentModal = null;
+let signatureCanvas = null;
+let signatureContext = null;
+let signatureDrawing = false;
+let signatureHasInk = false;
+let activeCheckpointIndex = null;
+let activeDocumentIndex = null;
 
 function scrollToCheckpoint(card, duration = 1000) {
   if (!card) return;
@@ -221,41 +311,336 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(completionState));
 }
 
+function saveDocumentState() {
+  localStorage.setItem(DOCUMENT_STORAGE_KEY, JSON.stringify(documentState));
+}
+
+function getStoredDocumentState(checkpointIndex, documentIndex) {
+  const checkpointState = documentState[checkpointIndex];
+
+  if (!checkpointState || typeof checkpointState !== 'object') return {};
+
+  if (documentIndex === 0 && ('checked' in checkpointState || 'signature' in checkpointState)) {
+    return checkpointState;
+  }
+
+  return checkpointState[documentIndex] || {};
+}
+
+function isSingleDocumentComplete(checkpointIndex, documentIndex) {
+  const documentConfig = getCheckpointDocuments(config.checkpoints[checkpointIndex])[documentIndex];
+
+  if (!documentConfig) return true;
+
+  const state = getStoredDocumentState(checkpointIndex, documentIndex);
+  return Boolean(state.checked) && Boolean(state.signature);
+}
+
+function isDocumentComplete(index) {
+  const documents = getCheckpointDocuments(config.checkpoints[index]);
+
+  return documents.every((_, documentIndex) => isSingleDocumentComplete(index, documentIndex));
+}
+
+function isCheckpointAvailable(index, firstIncompleteIndex) {
+  return completionState[index] || index === firstIncompleteIndex;
+}
+
 function renderState() {
   const firstIncompleteIndex = completionState.findIndex((isComplete) => !isComplete);
 
   cards.forEach((card, index) => {
     const button = card.querySelector('.complete-button');
+    const documentButtons = Array.from(card.querySelectorAll('.document-button'));
     const isComplete = completionState[index];
     const isActive = index === firstIncompleteIndex;
+    const isAvailable = isCheckpointAvailable(index, firstIncompleteIndex);
+    const documentComplete = isDocumentComplete(index);
+    const canComplete = isActive && documentComplete;
 
     card.classList.toggle('is-complete', isComplete);
     card.classList.toggle('is-active', isActive);
+    card.classList.toggle('is-locked', !isAvailable);
+    card.classList.toggle('has-document-complete', getCheckpointDocuments(config.checkpoints[index]).length > 0 && documentComplete);
 
+    button.disabled = !isComplete && !canComplete;
     button.setAttribute('aria-pressed', String(isComplete));
-    button.setAttribute(
-      'aria-label',
-      isComplete ? 'Označit checkpoint jako nesplněný' : 'Označit checkpoint jako splněný'
-    );
+
+    if (isComplete) {
+      button.setAttribute('aria-label', 'Označit checkpoint jako nesplněný');
+    } else if (!isActive) {
+      button.setAttribute('aria-label', 'Checkpoint je zamčený');
+    } else if (!documentComplete) {
+      button.setAttribute('aria-label', 'Nejprve dokončete dokument');
+    } else {
+      button.setAttribute('aria-label', 'Označit checkpoint jako splněný');
+    }
+
+    documentButtons.forEach((documentButton) => {
+      const documentIndex = Number(documentButton.dataset.documentIndex);
+      const singleDocumentComplete = isSingleDocumentComplete(index, documentIndex);
+
+      documentButton.disabled = !isAvailable;
+      documentButton.setAttribute('aria-disabled', String(!isAvailable));
+      documentButton.classList.toggle('is-complete', singleDocumentComplete);
+    });
   });
+}
+
+function clearLaterState(index) {
+  for (let i = index; i < completionState.length; i += 1) {
+    completionState[i] = false;
+
+    if (i > index && documentState[i]) {
+      delete documentState[i];
+    }
+  }
+}
+
+function createDocumentModal() {
+  const modal = document.createElement('div');
+  modal.className = 'document-modal';
+  modal.hidden = true;
+  modal.innerHTML = `
+    <div class="document-modal-backdrop" data-close-document></div>
+    <section class="document-dialog" role="dialog" aria-modal="true" aria-labelledby="documentModalTitle">
+      <div class="document-dialog-header">
+        <div>
+          <div class="document-dialog-eyebrow">Dokumentace vozu</div>
+          <h2 id="documentModalTitle"></h2>
+        </div>
+        <button class="document-close" type="button" data-close-document aria-label="Zavřít dokument">×</button>
+      </div>
+      <div class="document-image-wrap">
+        <img class="document-image" alt="">
+      </div>
+      <label class="document-check-row">
+        <input class="document-check" type="checkbox">
+        <span>kontrola</span>
+      </label>
+      <div class="signature-section" hidden>
+        <div class="signature-heading-row">
+          <strong>Podpis vedoucího posunu</strong>
+          <button class="signature-clear" type="button">Vymazat podpis</button>
+        </div>
+        <canvas class="signature-canvas"></canvas>
+      </div>
+      <div class="document-actions">
+        <button class="document-save" type="button" disabled>Uložit</button>
+      </div>
+    </section>
+  `;
+
+  document.body.appendChild(modal);
+  return modal;
+}
+
+function sizeSignatureCanvas() {
+  if (!signatureCanvas || signatureCanvas.closest('.signature-section').hidden) return;
+
+  const ratio = Math.max(1, window.devicePixelRatio || 1);
+  const rect = signatureCanvas.getBoundingClientRect();
+  const storedSignature = activeCheckpointIndex !== null && activeDocumentIndex !== null
+    ? getStoredDocumentState(activeCheckpointIndex, activeDocumentIndex).signature
+    : null;
+
+  signatureCanvas.width = Math.round(rect.width * ratio);
+  signatureCanvas.height = Math.round(rect.height * ratio);
+  signatureContext = signatureCanvas.getContext('2d');
+  signatureContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+  signatureContext.lineWidth = 2.4;
+  signatureContext.lineCap = 'round';
+  signatureContext.lineJoin = 'round';
+  signatureContext.strokeStyle = '#111111';
+
+  if (storedSignature) {
+    const image = new Image();
+    image.onload = () => {
+      signatureContext.drawImage(image, 0, 0, rect.width, rect.height);
+    };
+    image.src = storedSignature;
+  }
+}
+
+function updateDocumentForm() {
+  if (!documentModal || activeCheckpointIndex === null || activeDocumentIndex === null) return;
+
+  const checkInput = documentModal.querySelector('.document-check');
+  const signatureSection = documentModal.querySelector('.signature-section');
+  const saveButton = documentModal.querySelector('.document-save');
+  const checked = checkInput.checked;
+
+  signatureSection.hidden = !checked;
+
+  if (!signatureSection.hidden && signatureCanvas && signatureCanvas.width === 300) {
+    window.requestAnimationFrame(sizeSignatureCanvas);
+  }
+
+  saveButton.disabled = !(checked && signatureHasInk);
+}
+
+function openDocument(checkpointIndex, documentIndex) {
+  const checkpoint = config.checkpoints[checkpointIndex];
+  const documentConfig = getCheckpointDocuments(checkpoint)[documentIndex];
+  const firstIncompleteIndex = completionState.findIndex((isComplete) => !isComplete);
+
+  if (!documentConfig || !isCheckpointAvailable(checkpointIndex, firstIncompleteIndex)) return;
+
+  if (!documentModal) {
+    documentModal = createDocumentModal();
+    signatureCanvas = documentModal.querySelector('.signature-canvas');
+
+    documentModal.addEventListener('click', (event) => {
+      if (event.target.closest('[data-close-document]')) {
+        closeDocument();
+      }
+    });
+
+    documentModal.querySelector('.document-check').addEventListener('change', updateDocumentForm);
+    documentModal.querySelector('.signature-clear').addEventListener('click', () => {
+      if (!signatureContext || !signatureCanvas) return;
+      signatureContext.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+      signatureHasInk = false;
+      updateDocumentForm();
+    });
+
+    documentModal.querySelector('.document-save').addEventListener('click', saveActiveDocument);
+
+    signatureCanvas.addEventListener('pointerdown', startSignature);
+    signatureCanvas.addEventListener('pointermove', drawSignature);
+    signatureCanvas.addEventListener('pointerup', stopSignature);
+    signatureCanvas.addEventListener('pointercancel', stopSignature);
+    signatureCanvas.addEventListener('pointerleave', stopSignature);
+  }
+
+  activeCheckpointIndex = checkpointIndex;
+  activeDocumentIndex = documentIndex;
+  const stored = getStoredDocumentState(checkpointIndex, documentIndex);
+  const documents = getCheckpointDocuments(checkpoint);
+  const title = getDocumentTitle(documents, documentIndex);
+  const base = config.documentBase || '';
+  const image = documentModal.querySelector('.document-image');
+  const checkInput = documentModal.querySelector('.document-check');
+  const signatureSection = documentModal.querySelector('.signature-section');
+
+  documentModal.querySelector('#documentModalTitle').textContent = title;
+  image.src = `${base}${documentConfig.file}`;
+  image.alt = title;
+  checkInput.checked = Boolean(stored.checked);
+  checkInput.disabled = false;
+  signatureHasInk = Boolean(stored.signature);
+  signatureSection.hidden = !checkInput.checked;
+  documentModal.hidden = false;
+  document.body.classList.add('document-open');
+
+  window.requestAnimationFrame(() => {
+    sizeSignatureCanvas();
+    updateDocumentForm();
+  });
+}
+
+function closeDocument() {
+  if (!documentModal) return;
+  documentModal.hidden = true;
+  document.body.classList.remove('document-open');
+  activeCheckpointIndex = null;
+  activeDocumentIndex = null;
+  signatureDrawing = false;
+}
+
+function getSignaturePoint(event) {
+  const rect = signatureCanvas.getBoundingClientRect();
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+function startSignature(event) {
+  if (activeCheckpointIndex === null || activeDocumentIndex === null || !signatureContext) return;
+  signatureDrawing = true;
+  signatureCanvas.setPointerCapture(event.pointerId);
+  const point = getSignaturePoint(event);
+  signatureContext.beginPath();
+  signatureContext.moveTo(point.x, point.y);
+  event.preventDefault();
+}
+
+function drawSignature(event) {
+  if (!signatureDrawing || !signatureContext) return;
+  const point = getSignaturePoint(event);
+  signatureContext.lineTo(point.x, point.y);
+  signatureContext.stroke();
+  signatureHasInk = true;
+  updateDocumentForm();
+  event.preventDefault();
+}
+
+function stopSignature(event) {
+  if (!signatureDrawing) return;
+  signatureDrawing = false;
+  if (signatureCanvas.hasPointerCapture(event.pointerId)) {
+    signatureCanvas.releasePointerCapture(event.pointerId);
+  }
+}
+
+function saveActiveDocument() {
+  if (activeCheckpointIndex === null || activeDocumentIndex === null || !documentModal) return;
+
+  const checkInput = documentModal.querySelector('.document-check');
+  const checked = checkInput.checked;
+
+  if (!checked || !signatureHasInk) return;
+
+  const checkpointState = documentState[activeCheckpointIndex];
+
+  if (!checkpointState || 'checked' in checkpointState || 'signature' in checkpointState) {
+    documentState[activeCheckpointIndex] = {};
+  }
+
+  documentState[activeCheckpointIndex][activeDocumentIndex] = {
+    checked: true,
+    signature: signatureCanvas.toDataURL('image/png')
+  };
+
+  saveDocumentState();
+  renderState();
+  closeDocument();
 }
 
 cards.forEach((card, index) => {
   const button = card.querySelector('.complete-button');
+  const documentButtons = Array.from(card.querySelectorAll('.document-button'));
 
   button.addEventListener('click', () => {
-    const willBeComplete = !completionState[index];
-    completionState[index] = willBeComplete;
+    if (button.disabled) return;
+
+    if (completionState[index]) {
+      clearLaterState(index);
+      saveState();
+      saveDocumentState();
+      renderState();
+      scrollToCheckpoint(cards[index], 600);
+      return;
+    }
+
+    if (!isDocumentComplete(index)) return;
+
+    completionState[index] = true;
     saveState();
     renderState();
 
-    if (willBeComplete) {
-      const nextCard = cards.find((_, cardIndex) => !completionState[cardIndex]);
+    const nextCard = cards.find((_, cardIndex) => !completionState[cardIndex]);
 
-      if (nextCard) {
-        scrollToCheckpoint(nextCard, 1000);
-      }
+    if (nextCard) {
+      scrollToCheckpoint(nextCard, 1000);
     }
+  });
+
+  documentButtons.forEach((documentButton) => {
+    documentButton.addEventListener('click', () => {
+      openDocument(index, Number(documentButton.dataset.documentIndex));
+    });
   });
 });
 
@@ -266,9 +651,23 @@ if (resetButton) {
       scrollAnimationFrame = null;
     }
     completionState = cards.map(() => false);
+    documentState = {};
     saveState();
+    saveDocumentState();
     renderState();
   });
 }
+
+window.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && documentModal && !documentModal.hidden) {
+    closeDocument();
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (documentModal && !documentModal.hidden) {
+    sizeSignatureCanvas();
+  }
+});
 
 renderState();
